@@ -13,16 +13,17 @@ WHERE DATE_PART('year', hire_date) = '1986';
 
 -- 3. List the manager of each department along with their department 
 -- number, department name, employee number, last name, and first name.
-SELECT dpt.dept_name, mng.dept_no, emp.emp_no, emp.last_name, emp.first_name
+SELECT mng.dept_no, dpt.dept_name, emp.emp_no, emp.last_name, emp.first_name
 FROM departments as dpt
 INNER JOIN dept_manager as mng ON
 dpt.dept_no = mng.dept_no
 INNER JOIN employees as emp ON
 mng.emp_no = emp.emp_no
-ORDER BY dpt.dept_name
+ORDER BY mng.dept_no;
 
 -- 4. List the department number for each employee along with that employee’s 
 -- employee number, last name, first name, and department name.
+-- some employees work in more than one department, so this will have duplicate names/emp numbers
 SELECT dpt.dept_no, emp.emp_no, emp.last_name, emp.first_name, dpt.dept_name
 FROM employees as emp
 INNER JOIN dept_emp ON
@@ -55,18 +56,17 @@ WHERE emp_no IN
 
 -- 7. List each employee in the Sales and Development departments, 
 -- including their employee number, last name, first name, and department name.
--- FIX THIS ONE
-SELECT emp.emp_no, emp.last_name, emp.first_name, dpt.dept_name
+SELECT emp.emp_no, emp.last_name, emp.first_name, dept.dept_name
 FROM employees as emp
 INNER JOIN dept_emp ON
 emp.emp_no = dept_emp.emp_no
 INNER JOIN departments as dept ON
-dept_emp.dept_no = dpt.dept_no
-WHERE dpt.dept_name IN
+dept_emp.dept_no = dept.dept_no
+WHERE dept.dept_name IN
 (
-	SELECT dpt.dept_name
-	FROM departments as dpt
-	WHERE dpt.dept_name = 'Sales'
+	SELECT dept.dept_name
+	FROM departments as dept
+	WHERE dept.dept_name = 'Sales'
 	OR dept_name = 'Development');
 
 -- 8. List the frequency counts, in descending order, of all the employee last names 
@@ -75,6 +75,3 @@ SELECT last_name, COUNT(last_name) AS "freq_count"
 FROM employees
 GROUP BY last_name
 ORDER BY "freq_count" DESC;
-
-
-
